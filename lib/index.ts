@@ -1,9 +1,10 @@
-// import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 
 export interface SqsSfnDispatcherProps {
-  // Define construct properties here
+  sqsQueue: sqs.IQueue;
+  sfnStateMachine: sfn.IStateMachine;
 }
 
 export class SqsSfnDispatcher extends Construct {
