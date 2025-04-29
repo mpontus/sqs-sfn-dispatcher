@@ -5,6 +5,7 @@ import { ExampleStepFunction } from './example-step-function';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { CfnPipe } from 'aws-cdk-lib/aws-pipes';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as logs from 'aws-cdk-lib/aws-logs';
 
 
 /**
@@ -36,10 +37,14 @@ export class ExampleStack extends cdk.Stack {
     )
     role.addToPolicy(
       new iam.PolicyStatement({
-        actions: ["states:StartExecution"],
+        actions: ["states:StartExecution", "states:StartSyncExecution"],
         resources: [sampleStepMachine.stateMachine.stateMachineArn],
       })
     )
+
+    const logGroup = new logs.LogGroup(this, 'LogGroup', {
+      retention: logs.RetentionDays.TWO_WEEKS,
+    });
 
     new CfnPipe(this, 'Pipe', {
       roleArn: role.roleArn,
@@ -52,8 +57,16 @@ export class ExampleStack extends cdk.Stack {
       target: sampleStepMachine.stateMachine.stateMachineArn,
       targetParameters: {
         stepFunctionStateMachineParameters: {
+          invocationType: "FIRE_AND_FORGET",
         }
       },
+      logConfiguration: {
+        cloudwatchLogsLogDestination: {
+          logGroupArn: logGroup.logGroupArn,
+        },
+        includeExecutionData: ['ALL'],
+        level: 'INFO',
+      }
     });
       
 
