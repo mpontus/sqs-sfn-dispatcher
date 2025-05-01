@@ -28,6 +28,7 @@ export class SqsSfnDispatcher extends Construct {
     const mapState = new sfn.Map(this, "Map", {
       itemsPath: "$.Messages",
       maxConcurrency: 10,
+      resultPath: "$.processedMessages",
     });
 
     getMessages.next(mapState);
@@ -42,23 +43,38 @@ export class SqsSfnDispatcher extends Construct {
       }
     );
 
-    const deleteMessage = new tasks.CallAwsService(this, "DeleteMessage", {
-      service: "sqs",
-      action: "deleteMessage",
+    // After processing, return the ReceiptHandle for successful messages
+    const successState = new sfn.Pass(this, "Success", {
       parameters: {
-        QueueUrl: props.source.queueUrl,
-        ReceiptHandle: sfn.JsonPath.stringAt("$.ReceiptHandle"),
+        "Id.$": "States.Format('{}', States.UUID())",
+        "ReceiptHandle.$": "$.ReceiptHandle",
       },
-      iamResources: [props.source.queueArn],
     });
 
-    processItem.next(deleteMessage);
-
+    processItem.next(successState);
     mapState.itemProcessor(processItem);
+
+    // Delete all successfully processed messages in batch
+    const deleteMessages = new tasks.CallAwsService(
+      this,
+      "DeleteMessageBatch",
+      {
+        service: "sqs",
+        action: "deleteMessageBatch",
+        parameters: {
+          QueueUrl: props.source.queueUrl,
+          "Entries.$": "$.processedMessages",
+        },
+        iamResources: [props.source.queueArn],
+      }
+    );
+    mapState.next(deleteMessages);
 
     const stateMachine = new sfn.StateMachine(this, "StateMachine", {
       definitionBody: sfn.DefinitionBody.fromChainable(getMessages),
     });
+
+    props.source.grant(stateMachine.role, "sqs:DeleteMessage");
 
     this.stateMachine = stateMachine;
   }
