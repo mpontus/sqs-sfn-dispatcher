@@ -2,7 +2,8 @@
   "app": "npx ts-node --prefer-ts-exts bin/example.ts",
   "watch": {
     "include": [
-      "**"
+      "**",
+      "../**"
     ],
     "exclude": [
       "README.md",
