@@ -3,7 +3,6 @@ import * as sqs from "aws-cdk-lib/aws-sqs";
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import { ExpectedResult, IntegTest, Match } from "@aws-cdk/integ-tests-alpha";
 import { SqsSfnDispatcher } from "../lib/sqs-sfn-dispatcher";
-import * as iam from "aws-cdk-lib/aws-iam";
 
 const app = new App();
 const stack = new Stack(app, "TestStack");
@@ -29,23 +28,15 @@ const integ = new IntegTest(app, "DispatcherTest", {
   testCases: [stack],
 });
 
+const events = new Array(10).fill(0).map((_, i) => ({
+  Id: `${i}`,
+  MessageBody: JSON.stringify({ data: `message${i}` }),
+}));
+
 // Send test messages to the queue
 const sendMessages = integ.assertions.awsApiCall("SQS", "sendMessageBatch", {
   QueueUrl: queue.queueUrl,
-  Entries: [
-    {
-      Id: "1",
-      MessageBody: JSON.stringify({ data: "message1" }),
-    },
-    // {
-    //   Id: "2",
-    //   MessageBody: JSON.stringify({ data: "message2" }),
-    // },
-    // {
-    //   Id: "3",
-    //   MessageBody: JSON.stringify({ data: "message3" }),
-    // },
-  ],
+  Entries: events,
 });
 
 sendMessages.provider.addPolicyStatementFromSdkCall("sqs", "sendMessage", [
@@ -86,17 +77,9 @@ const listExecutions = integ.assertions.awsApiCall(
 // Assert that the number of executions is the same as the number of messages
 listExecutions.expect(
   ExpectedResult.objectLike({
-    executions: [
-      {
-        status: "SUCCEEDED",
-      },
-      // {
-      //   status: "SUCCEEDED",
-      // },
-      // {
-      //   status: "SUCCEEDED",
-      // },
-    ],
+    executions: events.map((_) => ({
+      status: "SUCCEEDED",
+    })),
   })
 );
 

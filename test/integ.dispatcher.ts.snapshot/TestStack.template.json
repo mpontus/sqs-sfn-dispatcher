@@ -154,33 +154,6 @@
    "Export": {
     "Name": "TestStack:ExportsOutputRefSourceQueue6E809DF09604904F"
    }
-  },
-  "ExportsOutputFnGetAttSourceQueue6E809DF0Arn9621F069": {
-   "Value": {
-    "Fn::GetAtt": [
-     "SourceQueue6E809DF0",
-     "Arn"
-    ]
-   },
-   "Export": {
-    "Name": "TestStack:ExportsOutputFnGetAttSourceQueue6E809DF0Arn9621F069"
-   }
-  },
-  "ExportsOutputRefDispatcherStateMachineD656F044B060669B": {
-   "Value": {
-    "Ref": "DispatcherStateMachineD656F044"
-   },
-   "Export": {
-    "Name": "TestStack:ExportsOutputRefDispatcherStateMachineD656F044B060669B"
-   }
-  },
-  "ExportsOutputRefTargetStateMachineF037FA9873510E3A": {
-   "Value": {
-    "Ref": "TargetStateMachineF037FA98"
-   },
-   "Export": {
-    "Name": "TestStack:ExportsOutputRefTargetStateMachineF037FA9873510E3A"
-   }
   }
  },
  "Parameters": {

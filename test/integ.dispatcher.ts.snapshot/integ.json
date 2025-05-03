@@ -5,6 +5,7 @@
       "stacks": [
         "TestStack"
       ],
+      "diffAssets": true,
       "assertionStack": "DispatcherTest/DefaultTest/DeployAssert",
       "assertionStackName": "DispatcherTestDefaultTestDeployAssertCD245468"
     }
