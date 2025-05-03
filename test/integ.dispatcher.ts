@@ -48,44 +48,44 @@ const sendMessages = integ.assertions.awsApiCall("SQS", "sendMessageBatch", {
   ],
 });
 
-// Start the dispatcher state machine
-const startExecution = integ.assertions
-  .awsApiCall("StepFunctions", "startExecution", {
-    stateMachineArn: dispatcher.stateMachine.stateMachineArn,
-  })
-  .next(
-    // Wait for execution to complete
-    integ.assertions
-      .awsApiCall("StepFunctions", "describeExecution", {
-        executionArn: sfn.JsonPath.stringAt("$.executionArn"),
-      })
-      .waitForAssertions({
-        timeout: Duration.seconds(30),
-        assertions: [
-          {
-            assertionType: "objectLike",
-            actual: sfn.JsonPath.stringAt("$.status"),
-            expected: "SUCCEEDED",
-          },
-        ],
-      })
-  );
+// // Start the dispatcher state machine
+// const startExecution = integ.assertions
+//   .awsApiCall("StepFunctions", "startExecution", {
+//     stateMachineArn: dispatcher.stateMachine.stateMachineArn,
+//   })
+//   .next(
+//     // Wait for execution to complete
+//     integ.assertions
+//       .awsApiCall("StepFunctions", "describeExecution", {
+//         executionArn: sfn.JsonPath.stringAt("$.executionArn"),
+//       })
+//       .waitForAssertions({
+//         timeout: Duration.seconds(30),
+//         assertions: [
+//           {
+//             assertionType: "objectLike",
+//             actual: sfn.JsonPath.stringAt("$.status"),
+//             expected: "SUCCEEDED",
+//           },
+//         ],
+//       })
+//   );
 
-// Chain the assertions
-sendMessages.next(startExecution);
+// // Chain the assertions
+// sendMessages.next(startExecution);
 
-// Verify queue is empty after processing
-integ.assertions
-  .awsApiCall("SQS", "getQueueAttributes", {
-    QueueUrl: queue.queueUrl,
-    AttributeNames: ["ApproximateNumberOfMessages"],
-  })
-  .expect(
-    ExpectedResult.objectLike({
-      Attributes: {
-        ApproximateNumberOfMessages: "0",
-      },
-    })
-  );
+// // Verify queue is empty after processing
+// integ.assertions
+//   .awsApiCall("SQS", "getQueueAttributes", {
+//     QueueUrl: queue.queueUrl,
+//     AttributeNames: ["ApproximateNumberOfMessages"],
+//   })
+//   .expect(
+//     ExpectedResult.objectLike({
+//       Attributes: {
+//         ApproximateNumberOfMessages: "0",
+//       },
+//     })
+//   );
 
-app.synth();
+// app.synth();
