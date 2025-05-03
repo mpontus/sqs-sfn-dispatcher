@@ -25,13 +25,19 @@ export class SqsSfnDispatcher extends Construct {
       iamResources: [props.source.queueArn],
     });
 
+    const choice = new sfn.Choice(this, "HasMessages");
+
+    getMessages.next(choice);
+
     const mapState = new sfn.Map(this, "Map", {
       itemsPath: "$.Messages",
       maxConcurrency: 10,
       resultPath: "$.processedMessages",
     });
 
-    getMessages.next(mapState);
+    choice.when(sfn.Condition.isPresent("$.Messages[0]"), mapState);
+
+    choice.otherwise(new sfn.Succeed(this, "Done"));
 
     const processItem = new tasks.StepFunctionsStartExecution(
       this,
@@ -69,6 +75,8 @@ export class SqsSfnDispatcher extends Construct {
       }
     );
     mapState.next(deleteMessages);
+
+    deleteMessages.next(getMessages);
 
     const stateMachine = new sfn.StateMachine(this, "StateMachine", {
       definitionBody: sfn.DefinitionBody.fromChainable(getMessages),
