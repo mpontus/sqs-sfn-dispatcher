@@ -19,26 +19,11 @@ export class SqsSfnDispatcher extends Construct {
   constructor(scope: Construct, id: string, props: SqsSfnDispatcherProps) {
     super(scope, id);
 
-    const batchSize = props.batchSize || 10;
-
-    const getMessages = new tasks.CallAwsService(this, "GetMessages", {
-      service: "sqs",
-      action: "receiveMessage",
-      parameters: {
-        QueueUrl: props.source.queueUrl,
-        MaxNumberOfMessages: batchSize,
-        WaitTimeSeconds: 5,
-      },
-      iamResources: [props.source.queueArn],
-    });
-
     const mapState = new sfn.Map(this, "Map", {
       itemsPath: "$.Messages",
       maxConcurrency: 10,
       resultPath: "$.processedMessages",
     });
-
-    getMessages.next(mapState);
 
     const processItem = new tasks.StepFunctionsStartExecution(
       this,
@@ -78,7 +63,7 @@ export class SqsSfnDispatcher extends Construct {
     mapState.next(deleteMessages);
 
     const stateMachine = new sfn.StateMachine(this, "StateMachine", {
-      definitionBody: sfn.DefinitionBody.fromChainable(getMessages),
+      definitionBody: sfn.DefinitionBody.fromChainable(mapState),
     });
 
     props.source.grant(stateMachine.role, "sqs:DeleteMessage");
@@ -170,6 +155,7 @@ export class SqsSfnDispatcher extends Construct {
       new lambdaEventSources.SqsEventSource(props.source, {
         batchSize: props.batchSize || 10,
         reportBatchItemFailures: true, // Enable partial batch responses
+        maxBatchingWindow: Duration.seconds(5),
       })
     );
   }
