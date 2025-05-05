@@ -1,0 +1,7 @@
+{
+  "TestStack": {
+    "ExportsOutputRefSourceQueue6E809DF09604904F": "https://sqs.us-east-1.amazonaws.com/370210374925/TestStack-SourceQueue6E809DF0-bQGZZprnOzQ6",
+    "ExportsOutputFnGetAttSourceQueue6E809DF0Arn9621F069": "arn:aws:sqs:us-east-1:370210374925:TestStack-SourceQueue6E809DF0-bQGZZprnOzQ6",
+    "ExportsOutputRefTargetStateMachineF037FA9873510E3A": "arn:aws:states:us-east-1:370210374925:stateMachine:TargetStateMachineF037FA98-9ufMqn6qJ6tT"
+  }
+}

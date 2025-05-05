@@ -22,31 +22,48 @@ export class SqsSfnDispatcher extends Construct {
     const mapState = new sfn.Map(this, "Map", {
       itemsPath: "$.Messages",
       maxConcurrency: 10,
-      resultPath: "$.processedMessages",
+      // resultPath: "$.processedMessages",
+      resultSelector: {
+        "processedMessages.$": "$[?(@.Success == true)].Message",
+      },
     });
 
+    // Create a try-catch pattern for each item
     const processItem = new tasks.StepFunctionsStartExecution(
       this,
       "ProcessItem",
       {
         stateMachine: props.target,
-        input: sfn.TaskInput.fromJsonPathAt("$.Body"),
-        resultPath: sfn.JsonPath.DISCARD,
+        inputPath: "$.Body",
+        integrationPattern: sfn.IntegrationPattern.RUN_JOB,
+        resultPath: "$.executionResult",
       }
     );
 
-    // After processing, return the ReceiptHandle for successful messages
-    const successState = new sfn.Pass(this, "Success", {
+    const success = new sfn.Pass(this, "Success", {
       parameters: {
-        "Id.$": "States.Format('{}', States.UUID())",
-        "ReceiptHandle.$": "$.ReceiptHandle",
+        Message: {
+          "Id.$": "States.Format('{}', States.UUID())",
+          "ReceiptHandle.$": "$.ReceiptHandle",
+        },
+        Success: true,
       },
     });
 
-    processItem.next(successState);
+    processItem.next(success);
+
+    // Add a catch handler to the process item
+    processItem.addCatch(
+      new sfn.Pass(this, "Catch", {
+        parameters: {
+          Success: false,
+        },
+      })
+    );
+
     mapState.itemProcessor(processItem);
 
-    // Delete all successfully processed messages in batch
+    // Delete only successfully processed messages in batch using JSONPath filter
     const deleteMessages = new tasks.CallAwsService(
       this,
       "DeleteMessageBatch",
@@ -55,12 +72,21 @@ export class SqsSfnDispatcher extends Construct {
         action: "deleteMessageBatch",
         parameters: {
           QueueUrl: props.source.queueUrl,
+          // Use JSONPath filter expression to select only successful messages
           "Entries.$": "$.processedMessages",
         },
         iamResources: [props.source.queueArn],
       }
     );
-    mapState.next(deleteMessages);
+
+    const hasMessages = new sfn.Choice(this, "HasMessages", {
+      queryLanguage: sfn.QueryLanguage.JSON_PATH,
+    });
+
+    hasMessages
+      .when(sfn.Condition.isPresent("$.processedMessages[0]"), deleteMessages)
+      .otherwise(new sfn.Succeed(this, "NoMessages"));
+    mapState.next(hasMessages);
 
     const stateMachine = new sfn.StateMachine(this, "StateMachine", {
       definitionBody: sfn.DefinitionBody.fromChainable(mapState),
