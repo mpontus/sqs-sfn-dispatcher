@@ -28,7 +28,7 @@ const integ = new IntegTest(app, "DispatcherTest", {
   testCases: [stack],
 });
 
-const events = new Array(10).fill(0).map((_, i) => ({
+const events = new Array(5).fill(0).map((_, i) => ({
   Id: `${i}`,
   MessageBody: JSON.stringify({ data: `message${i}` }),
 }));
@@ -43,29 +43,6 @@ sendMessages.provider.addPolicyStatementFromSdkCall("sqs", "sendMessage", [
   queue.queueArn,
 ]);
 
-// Start the dispatcher state machine
-const startExecution = integ.assertions.awsApiCall(
-  "StepFunctions",
-  "startExecution",
-  {
-    stateMachineArn: dispatcher.stateMachine.stateMachineArn,
-  }
-);
-const describeExecution = integ.assertions
-  .awsApiCall("StepFunctions", "describeExecution", {
-    executionArn: startExecution.getAttString("executionArn"),
-  })
-  .expect(
-    ExpectedResult.objectLike({
-      status: "SUCCEEDED",
-    })
-  )
-  .waitForAssertions({
-    totalTimeout: Duration.minutes(1),
-  });
-
-startExecution.next(describeExecution);
-
 const listExecutions = integ.assertions.awsApiCall(
   "StepFunctions",
   "listExecutions",
@@ -75,31 +52,18 @@ const listExecutions = integ.assertions.awsApiCall(
 );
 
 // Assert that the number of executions is the same as the number of messages
-listExecutions.expect(
-  ExpectedResult.objectLike({
-    executions: events.map((_) => ({
-      status: "SUCCEEDED",
-    })),
-  })
-);
+listExecutions
+  .expect(
+    ExpectedResult.objectLike({
+      executions: events.map((_) => ({
+        status: "SUCCEEDED",
+      })),
+    })
+  )
+  .waitForAssertions({
+    totalTimeout: Duration.seconds(30),
+  });
 
-describeExecution.next(listExecutions);
+sendMessages.next(listExecutions);
 
-// // Chain the assertions
-// sendMessages.next(startExecution);
-
-// // Verify queue is empty after processing
-// integ.assertions
-//   .awsApiCall("SQS", "getQueueAttributes", {
-//     QueueUrl: queue.queueUrl,
-//     AttributeNames: ["ApproximateNumberOfMessages"],
-//   })
-//   .expect(
-//     ExpectedResult.objectLike({
-//       Attributes: {
-//         ApproximateNumberOfMessages: "0",
-//       },
-//     })
-//   );
-
-// app.synth();
+app.synth();

@@ -27,7 +27,7 @@
      "Entries": "[{\"Id\":\"0\",\"MessageBody\":\"{\\\"number\\\":0}\"},{\"Id\":\"1\",\"MessageBody\":\"{\\\"number\\\":1}\"},{\"Id\":\"2\",\"MessageBody\":\"{\\\"number\\\":2}\"},{\"Id\":\"3\",\"MessageBody\":\"{\\\"number\\\":3}\"},{\"Id\":\"4\",\"MessageBody\":\"{\\\"number\\\":4}\"},{\"Id\":\"5\",\"MessageBody\":\"{\\\"number\\\":5}\"},{\"Id\":\"6\",\"MessageBody\":\"{\\\"number\\\":6}\"},{\"Id\":\"7\",\"MessageBody\":\"{\\\"number\\\":7}\"},{\"Id\":\"8\",\"MessageBody\":\"{\\\"number\\\":8}\"},{\"Id\":\"9\",\"MessageBody\":\"{\\\"number\\\":9}\"}]"
     },
     "flattenResponse": "false",
-    "salt": "1746714527627"
+    "salt": "1746719395664"
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
@@ -172,7 +172,7 @@
     },
     "service": "StepFunctions",
     "api": "listExecutions",
-    "expected": "{\"$ObjectLike\":{\"executions\":{\"$ArrayWith\":[{\"status\":\"FAILED\"},{\"status\":\"FAILED\"},{\"status\":\"FAILED\"},{\"status\":\"FAILED\"},{\"status\":\"FAILED\"}]}}}",
+    "expected": "{\"$ObjectLike\":{\"executions\":[{\"status\":\"FAILED\"},{\"status\":\"FAILED\"},{\"status\":\"FAILED\"},{\"status\":\"FAILED\"},{\"status\":\"FAILED\"}]}}",
     "stateMachineArn": {
      "Ref": "AwsApiCallStepFunctionslistExecutions4c61bd4cb2d73a6584546e772679c1b1WaitForFD948F4E"
     },
@@ -192,7 +192,7 @@
      "statusFilter": "\"FAILED\""
     },
     "flattenResponse": "false",
-    "salt": "1746714527631"
+    "salt": "1746719395665"
    },
    "DependsOn": [
     "AwsApiCallSQSsendMessageBatchfb41d5fd61ff52128ce7ccf2df4194a6"
@@ -297,7 +297,7 @@
      "Fn::Join": [
       "",
       [
-       "{\"StartAt\":\"framework-isComplete-task\",\"States\":{\"framework-isComplete-task\":{\"End\":true,\"Retry\":[{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":5,\"MaxAttempts\":360,\"BackoffRate\":1}],\"Catch\":[{\"ErrorEquals\":[\"States.ALL\"],\"Next\":\"framework-onTimeout-task\"}],\"Type\":\"Task\",\"Resource\":\"",
+       "{\"StartAt\":\"framework-isComplete-task\",\"States\":{\"framework-isComplete-task\":{\"End\":true,\"Retry\":[{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":5,\"MaxAttempts\":6,\"BackoffRate\":1}],\"Catch\":[{\"ErrorEquals\":[\"States.ALL\"],\"Next\":\"framework-onTimeout-task\"}],\"Type\":\"Task\",\"Resource\":\"",
        {
         "Fn::GetAtt": [
          "SingletonFunction76b3e830a873425f8453eddd85c86925Handler81461ECE",
@@ -446,7 +446,7 @@
     }
    }
   },
-  "AwsApiCallSQSgetQueueAttributesdc6e1ba4fcdc81eade5dd5ea896db414": {
+  "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745": {
    "Type": "Custom::DeployAssert@SdkCallSQSgetQueueAttributes",
    "Properties": {
     "ServiceToken": {
@@ -457,7 +457,7 @@
     },
     "service": "SQS",
     "api": "getQueueAttributes",
-    "expected": "{\"$ObjectLike\":{\"Attributes\":{\"ApproximateNumberOfMessages\":\"5\"}}}",
+    "expected": "{\"$ObjectLike\":{\"Attributes\":{\"ApproximateNumberOfMessagesNotVisible\":\"5\"}}}",
     "parameters": {
      "QueueUrl": {
       "Fn::Join": [
@@ -471,10 +471,10 @@
        ]
       ]
      },
-     "AttributeNames": "[\"ApproximateNumberOfMessages\"]"
+     "AttributeNames": "[\"ApproximateNumberOfMessagesNotVisible\"]"
     },
     "flattenResponse": "false",
-    "salt": "1746714527642"
+    "salt": "1746719395671"
    },
    "DependsOn": [
     "AwsApiCallStepFunctionslistExecutions4c61bd4cb2d73a6584546e772679c1b1",
@@ -620,10 +620,10 @@
     ]
    }
   },
-  "AssertionResultsAwsApiCallSQSgetQueueAttributesdc6e1ba4fcdc81eade5dd5ea896db414": {
+  "AssertionResultsAwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745": {
    "Value": {
     "Fn::GetAtt": [
-     "AwsApiCallSQSgetQueueAttributesdc6e1ba4fcdc81eade5dd5ea896db414",
+     "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745",
      "assertion"
     ]
    }

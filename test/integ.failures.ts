@@ -74,14 +74,14 @@ listFailedExecutions.provider.addPolicyStatementFromSdkCall(
 listFailedExecutions
   .expect(
     ExpectedResult.objectLike({
-      executions: Match.arrayWith(
-        Array.from({ length: messageCount / 2 }).map(() => ({
-          status: "FAILED",
-        }))
-      ),
+      executions: Array.from({ length: messageCount / 2 }).map(() => ({
+        status: "FAILED",
+      })),
     })
   )
-  .waitForAssertions();
+  .waitForAssertions({
+    totalTimeout: Duration.seconds(30),
+  });
 
 // Check remaining messages in the queue (should be the odd-numbered ones)
 const getQueueAttributes = integ.assertions.awsApiCall(
@@ -89,7 +89,7 @@ const getQueueAttributes = integ.assertions.awsApiCall(
   "getQueueAttributes",
   {
     QueueUrl: queue.queueUrl,
-    AttributeNames: ["ApproximateNumberOfMessages"],
+    AttributeNames: ["ApproximateNumberOfMessagesNotVisible"],
   }
 );
 getQueueAttributes.provider.addPolicyStatementFromSdkCall(
@@ -102,7 +102,7 @@ getQueueAttributes.provider.addPolicyStatementFromSdkCall(
 getQueueAttributes.expect(
   ExpectedResult.objectLike({
     Attributes: {
-      ApproximateNumberOfMessages: `${messageCount / 2}`,
+      ApproximateNumberOfMessagesNotVisible: `${messageCount / 2}`,
     },
   })
 );

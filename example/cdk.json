@@ -3,7 +3,7 @@
   "watch": {
     "include": [
       "**",
-      "../**"
+      "../lib"
     ],
     "exclude": [
       "README.md",

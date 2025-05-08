@@ -7,6 +7,16 @@ The construct defines an interface (`SqsSfnDispatcherProps`) to configure the vi
 
 ## Useful commands
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
+- `npm run build` compile typescript to js
+- `npm run watch` watch for changes and compile
+- `npm run test` perform the jest unit tests
+
+## TODO
+
+- [x] Implement dispatcher construct
+- [x] Test simple test case
+- [x] Test failure scenario
+- [ ] Test FIFO queue
+- [ ] Singleton and works for many target functions
+- [ ] Github actions
+- [ ] Readme

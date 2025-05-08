@@ -1,5 +1,5 @@
 {
-  "version": "41.0.0",
+  "version": "43.0.0",
   "artifacts": {
     "TestStack.assets": {
       "type": "cdk:asset-manifest",
@@ -497,7 +497,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/faf9a250836b006a9e581d85c73e0465be8a651586473c346a3e3c321f253c32.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/d285d7391c673589cbc60f70e0a46013be9e3becadd2934422ef05c5641e3ad3.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -618,7 +618,7 @@
             "data": "SingletonFunction5c1898e096fb4e3e95d5f6c67f3ce41aHandlerADF3E6EA"
           }
         ],
-        "/DispatcherTest/DefaultTest/DeployAssert/AwsApiCallSQSgetQueueAttributesdc6e1ba4fcdc81eade5dd5ea896db414/Default": [
+        "/DispatcherTest/DefaultTest/DeployAssert/AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745/Default": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": "*"
@@ -632,16 +632,16 @@
             "data": "*"
           }
         ],
-        "/DispatcherTest/DefaultTest/DeployAssert/AwsApiCallSQSgetQueueAttributesdc6e1ba4fcdc81eade5dd5ea896db414/Default/Default": [
+        "/DispatcherTest/DefaultTest/DeployAssert/AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745/Default/Default": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "AwsApiCallSQSgetQueueAttributesdc6e1ba4fcdc81eade5dd5ea896db414"
+            "data": "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745"
           }
         ],
-        "/DispatcherTest/DefaultTest/DeployAssert/AwsApiCallSQSgetQueueAttributesdc6e1ba4fcdc81eade5dd5ea896db414/AssertionResults": [
+        "/DispatcherTest/DefaultTest/DeployAssert/AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745/AssertionResults": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "AssertionResultsAwsApiCallSQSgetQueueAttributesdc6e1ba4fcdc81eade5dd5ea896db414"
+            "data": "AssertionResultsAwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745"
           }
         ],
         "/DispatcherTest/DefaultTest/DeployAssert/BootstrapVersion": [
@@ -666,5 +666,5 @@
       }
     }
   },
-  "minimumCliVersion": "2.1005.0"
+  "minimumCliVersion": "2.1013.0"
 }
