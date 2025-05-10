@@ -11,6 +11,7 @@ interface SqsSfnDispatcherProps {
   source: sqs.IQueue;
   target: sfn.IStateMachine;
   batchSize?: number;
+  maxBatchingWindow?: Duration;
 }
 
 export class SqsSfnDispatcher extends Construct {
@@ -23,7 +24,6 @@ export class SqsSfnDispatcher extends Construct {
     const mapState = new sfn.Map(this, "Map", {
       itemsPath: "$.Messages",
       maxConcurrency: 10,
-      // resultPath: "$.processedMessages",
       resultSelector: {
         "processedMessages.$": "$[?(@.Success == true)].Message",
       },
@@ -35,7 +35,6 @@ export class SqsSfnDispatcher extends Construct {
         Type: "Task",
         Resource: "arn:aws:states:::states:startExecution.sync",
         Parameters: {
-          // "StateMachineArn.$": "$.targetStateMachineArn",
           "StateMachineArn.$": "$$.Execution.Input.targetStateMachineArn",
           "Input.$": "$.Body",
         },
@@ -75,7 +74,6 @@ export class SqsSfnDispatcher extends Construct {
         action: "deleteMessageBatch",
         parameters: {
           QueueUrl: props.source.queueUrl,
-          // Use JSONPath filter expression to select only successful messages
           "Entries.$": "$.processedMessages",
         },
         iamResources: [props.source.queueArn],
@@ -147,7 +145,7 @@ export class SqsSfnDispatcher extends Construct {
             }
           }
         });
-        
+
         /**
          * Lambda function that receives SQS messages and forwards them to the dispatcher state machine.
          * It marks all messages as failed so that the Step Function remains responsible for deleting them.
@@ -244,9 +242,9 @@ export class SqsSfnDispatcher extends Construct {
     // Add the SQS event source to the Lambda function
     this.triggerFunction.addEventSource(
       new lambdaEventSources.SqsEventSource(props.source, {
-        batchSize: props.batchSize || 10,
         reportBatchItemFailures: true, // Enable partial batch responses
-        maxBatchingWindow: Duration.seconds(5),
+        batchSize: props.batchSize,
+        maxBatchingWindow: props.maxBatchingWindow,
       })
     );
   }
