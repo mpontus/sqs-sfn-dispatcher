@@ -44,7 +44,25 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
-  "DispatcherStateMachineRole8DD0EF08": {
+  "DispatcherTriggerFunctionSqsEventSourceTestStackSourceQueue7DDB12C004B6C492": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "BatchSize": 1,
+    "EventSourceArn": {
+     "Fn::GetAtt": [
+      "SourceQueue6E809DF0",
+      "Arn"
+     ]
+    },
+    "FunctionName": {
+     "Ref": "SingletonLambda8675309a123456789abcdef0123456789BFBF4B41"
+    },
+    "FunctionResponseTypes": [
+     "ReportBatchItemFailures"
+    ]
+   }
+  },
+  "SingletonStateMachinec9b6cb1efa0e47e4a730ef953c53d3f7Role58A8BE34": {
    "Type": "AWS::IAM::Role",
    "Properties": {
     "AssumeRolePolicyDocument": {
@@ -61,7 +79,7 @@
     }
    }
   },
-  "DispatcherStateMachineRoleDefaultPolicy724CDF2B": {
+  "SingletonStateMachinec9b6cb1efa0e47e4a730ef953c53d3f7RoleDefaultPolicyCBBF4C66": {
    "Type": "AWS::IAM::Policy",
    "Properties": {
     "PolicyDocument": {
@@ -117,15 +135,15 @@
      ],
      "Version": "2012-10-17"
     },
-    "PolicyName": "DispatcherStateMachineRoleDefaultPolicy724CDF2B",
+    "PolicyName": "SingletonStateMachinec9b6cb1efa0e47e4a730ef953c53d3f7RoleDefaultPolicyCBBF4C66",
     "Roles": [
      {
-      "Ref": "DispatcherStateMachineRole8DD0EF08"
+      "Ref": "SingletonStateMachinec9b6cb1efa0e47e4a730ef953c53d3f7Role58A8BE34"
      }
     ]
    }
   },
-  "DispatcherStateMachineD656F044": {
+  "SingletonStateMachinec9b6cb1efa0e47e4a730ef953c53d3f71DE153A2": {
    "Type": "AWS::StepFunctions::StateMachine",
    "Properties": {
     "DefinitionString": {
@@ -146,35 +164,17 @@
     },
     "RoleArn": {
      "Fn::GetAtt": [
-      "DispatcherStateMachineRole8DD0EF08",
+      "SingletonStateMachinec9b6cb1efa0e47e4a730ef953c53d3f7Role58A8BE34",
       "Arn"
      ]
     }
    },
    "DependsOn": [
-    "DispatcherStateMachineRoleDefaultPolicy724CDF2B",
-    "DispatcherStateMachineRole8DD0EF08"
+    "SingletonStateMachinec9b6cb1efa0e47e4a730ef953c53d3f7RoleDefaultPolicyCBBF4C66",
+    "SingletonStateMachinec9b6cb1efa0e47e4a730ef953c53d3f7Role58A8BE34"
    ],
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
-  },
-  "DispatcherTriggerFunctionSqsEventSourceTestStackSourceQueue7DDB12C004B6C492": {
-   "Type": "AWS::Lambda::EventSourceMapping",
-   "Properties": {
-    "BatchSize": 1,
-    "EventSourceArn": {
-     "Fn::GetAtt": [
-      "SourceQueue6E809DF0",
-      "Arn"
-     ]
-    },
-    "FunctionName": {
-     "Ref": "SingletonLambda8675309a123456789abcdef0123456789BFBF4B41"
-    },
-    "FunctionResponseTypes": [
-     "ReportBatchItemFailures"
-    ]
-   }
   },
   "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleAAD8545D": {
    "Type": "AWS::IAM::Role",
@@ -216,7 +216,7 @@
        "Action": "states:StartExecution",
        "Effect": "Allow",
        "Resource": {
-        "Ref": "DispatcherStateMachineD656F044"
+        "Ref": "SingletonStateMachinec9b6cb1efa0e47e4a730ef953c53d3f71DE153A2"
        }
       },
       {
@@ -256,7 +256,7 @@
     "Environment": {
      "Variables": {
       "STATE_MACHINE_ARN": {
-       "Ref": "DispatcherStateMachineD656F044"
+       "Ref": "SingletonStateMachinec9b6cb1efa0e47e4a730ef953c53d3f71DE153A2"
       },
       "QUEUE_SourceQueue": {
        "Fn::GetAtt": [

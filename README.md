@@ -53,3 +53,9 @@ const dispatcher = new SqsSfnDispatcher(this, "MyDispatcher", {
 2. If a message fails processing, subsequent messages with the same group d will not be processed until the failed message is successfully processed
 
 Also, don't use DLQs with FIFO queues if the order of operations is critical for your application. When a message moves to a DLQ, the queue continues processing the next message in the group, breaking the ordering guarantee.
+
+## License
+
+This project is licensed under the Apache License 2.0.
+
+Copyright 2023. All rights reserved.
