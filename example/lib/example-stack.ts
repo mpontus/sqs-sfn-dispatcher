@@ -21,7 +21,8 @@ export class ExampleStack extends cdk.Stack {
     super(scope, id, props);
 
     const queue = new sqs.Queue(this, "Queue", {
-      visibilityTimeout: cdk.Duration.seconds(30),
+      visibilityTimeout: cdk.Duration.seconds(10),
+      fifo: true,
     });
 
     const sampleStepMachine = new ExampleStepFunction(
@@ -29,18 +30,9 @@ export class ExampleStack extends cdk.Stack {
       "SampleStepMachine"
     );
 
-    const sampleStepMachine2 = new ExampleStepFunction(
-      this,
-      "SampleStepMachine2"
-    );
-
     const dispatcher = new SqsSfnDispatcher(this, "SqsSfnDispatcher", {
       source: queue,
       target: sampleStepMachine.stateMachine,
-    });
-    const dispatcher2 = new SqsSfnDispatcher(this, "SqsSfnDispatcher2", {
-      source: queue,
-      target: sampleStepMachine2.stateMachine,
     });
 
     // const role = new iam.Role(this, "Role", {

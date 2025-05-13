@@ -1,0 +1,13 @@
+{
+  "version": "41.0.0",
+  "testCases": {
+    "DispatcherTest/DefaultTest": {
+      "stacks": [
+        "TestStack"
+      ],
+      "assertionStack": "DispatcherTest/DefaultTest/DeployAssert",
+      "assertionStackName": "DispatcherTestDefaultTestDeployAssertCD245468"
+    }
+  },
+  "minimumCliVersion": "2.1005.0"
+}

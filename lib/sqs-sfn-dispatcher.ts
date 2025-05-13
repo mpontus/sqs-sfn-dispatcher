@@ -242,8 +242,10 @@ export class SqsSfnDispatcher extends Construct {
     // Add the SQS event source to the Lambda function
     this.triggerFunction.addEventSource(
       new lambdaEventSources.SqsEventSource(props.source, {
-        reportBatchItemFailures: true, // Enable partial batch responses
-        batchSize: props.batchSize,
+        // Enables lambda to exit successfully without deleting messages
+        reportBatchItemFailures: true,
+        // Force batch size for 1 for FIFO queues to preserve message group ordering
+        batchSize: props.source.fifo ? 1 : props.batchSize,
         maxBatchingWindow: props.maxBatchingWindow,
       })
     );

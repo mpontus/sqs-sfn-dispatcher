@@ -1,22 +1,55 @@
-# Welcome to your CDK TypeScript Construct Library project
+# SQS to Step Functions Dispatcher
 
-You should explore the contents of this project. It demonstrates a CDK Construct Library that includes a construct (`SqsSfnDispatcher`)
-which contains an Amazon SQS queue that is subscribed to an Amazon SNS topic.
+CDK construct for dispatching messages from AWS SQS to Step Functions state machines.
 
-The construct defines an interface (`SqsSfnDispatcherProps`) to configure the visibility timeout of the queue.
+## Problem
 
-## Useful commands
+Integrating Step Functions with Amazon SQS can be done in one of the following ways:
 
-- `npm run build` compile typescript to js
-- `npm run watch` watch for changes and compile
-- `npm run test` perform the jest unit tests
+1. Create a task in state machine that retrieves messages from the queue before invoking processing logic.
+2. Use EventBridge Pipes to connect queue with the state machine using Map state to process batched messages.
 
-## TODO
+Either way, the state machine processing SQS messages can not not be focused purely on the business logic.
 
-- [x] Implement dispatcher construct
-- [x] Test simple test case
-- [x] Test failure scenario
-- [ ] Test FIFO queue
-- [ ] Singleton and works for many target functions
-- [ ] Github actions
-- [ ] Readme
+## Solution Architecture
+
+```
+┌─────────┐     ┌──────────────┐     ┌─────────────────────┐     ┌─────────────────┐
+│         │     │              │     │                     │     │                 │
+│   SQS   │────▶│ Lambda       │────▶│ Dispatcher          │────▶│ Target          │
+│  Queue  │     │ Trigger      │     │ Step Function       │     │ Step Function   │
+│         │     │ Function     │     │ (Map State)         │     │ (Your Logic)    │
+└─────────┘     └──────────────┘     └─────────────────────┘     └─────────────────┘
+                                              │
+                                              │ Success/Failure tracking
+                                              ▼
+                                     ┌─────────────────────┐
+                                     │                     │
+                                     │ Delete Successfully │
+                                     │ Processed Messages  │
+                                     │                     │
+                                     └─────────────────────┘
+```
+
+The solution uses a singleton Lambda function that retrieves messages from the queue and forwards them to the dispatcher state machine. Then the state machine processes messages in parallel, sending each message to the target state machine and deletes successfully processed messages.
+
+## Usage
+
+```typescript
+import { SqsSfnDispatcher } from "sqs-sfn-dispatcher";
+
+// Create a dispatcher that connects your SQS queue to your Step Function
+const dispatcher = new SqsSfnDispatcher(this, "MyDispatcher", {
+  source: myQueue,
+  target: myStateMachine,
+});
+```
+
+### Working with FIFO Queues
+
+**Important:** The SQS-SFN Dispatcher automatically sets the batch size to 1 for FIFO queues to preserve message group ordering. This ensures that:
+
+1. Only one message per group is processed by lambda
+2. If a message fails processing, subsequent messages with the same group d will not be processed until the failed message is successfully processed
+
+Also, don't use DLQs with FIFO queues if the order of operations is critical for your application. When a message moves to a DLQ, the queue continues processing the next message in the group, breaking the ordering guarantee.

@@ -1,0 +1,351 @@
+{
+ "Resources": {
+  "TargetStateMachineRoleF8CC820D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "states.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "TargetStateMachineF037FA98": {
+   "Type": "AWS::StepFunctions::StateMachine",
+   "Properties": {
+    "DefinitionString": "{\"StartAt\":\"Fail\",\"States\":{\"Fail\":{\"Type\":\"Fail\"}}}",
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "TargetStateMachineRoleF8CC820D",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "TargetStateMachineRoleF8CC820D"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "SourceQueue6E809DF0": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "ContentBasedDeduplication": true,
+    "FifoQueue": true,
+    "VisibilityTimeout": 30
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "DispatcherStateMachineRole8DD0EF08": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "states.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "DispatcherStateMachineRoleDefaultPolicy724CDF2B": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "sqs:DeleteMessage",
+        "sqs:deleteMessageBatch"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "SourceQueue6E809DF0",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "states:StartExecution",
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "TargetStateMachineF037FA98"
+       }
+      },
+      {
+       "Action": [
+        "events:DescribeRule",
+        "events:PutRule",
+        "events:PutTargets"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":events:",
+          {
+           "Ref": "AWS::Region"
+          },
+          ":",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":rule/StepFunctionsGetEventsForStepFunctionsExecutionRule"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "DispatcherStateMachineRoleDefaultPolicy724CDF2B",
+    "Roles": [
+     {
+      "Ref": "DispatcherStateMachineRole8DD0EF08"
+     }
+    ]
+   }
+  },
+  "DispatcherStateMachineD656F044": {
+   "Type": "AWS::StepFunctions::StateMachine",
+   "Properties": {
+    "DefinitionString": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"StartAt\":\"Map\",\"States\":{\"Map\":{\"Type\":\"Map\",\"Next\":\"HasMessages\",\"ResultSelector\":{\"processedMessages.$\":\"$[?(@.Success == true)].Message\"},\"ItemsPath\":\"$.Messages\",\"ItemProcessor\":{\"ProcessorConfig\":{\"Mode\":\"INLINE\"},\"StartAt\":\"ProcessItem\",\"States\":{\"ProcessItem\":{\"Next\":\"Success\",\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::states:startExecution.sync\",\"Parameters\":{\"StateMachineArn.$\":\"$$.Execution.Input.targetStateMachineArn\",\"Input.$\":\"$.Body\"},\"ResultPath\":null,\"Catch\":[{\"ErrorEquals\":[\"States.ALL\"],\"Next\":\"Catch\"}]},\"Success\":{\"Type\":\"Pass\",\"Parameters\":{\"Message\":{\"Id.$\":\"States.Format('{}', States.UUID())\",\"ReceiptHandle.$\":\"$.ReceiptHandle\"},\"Success\":true},\"End\":true},\"Catch\":{\"Type\":\"Pass\",\"Parameters\":{\"Success\":false},\"End\":true}}},\"MaxConcurrency\":10},\"HasMessages\":{\"Type\":\"Choice\",\"Choices\":[{\"Variable\":\"$.processedMessages[0]\",\"IsPresent\":true,\"Next\":\"DeleteMessageBatch\"}],\"Default\":\"NoMessages\"},\"NoMessages\":{\"Type\":\"Succeed\"},\"DeleteMessageBatch\":{\"End\":true,\"Type\":\"Task\",\"Resource\":\"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":states:::aws-sdk:sqs:deleteMessageBatch\",\"Parameters\":{\"QueueUrl\":\"",
+       {
+        "Ref": "SourceQueue6E809DF0"
+       },
+       "\",\"Entries.$\":\"$.processedMessages\"}}}}"
+      ]
+     ]
+    },
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "DispatcherStateMachineRole8DD0EF08",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "DispatcherStateMachineRoleDefaultPolicy724CDF2B",
+    "DispatcherStateMachineRole8DD0EF08"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "DispatcherTriggerFunctionSqsEventSourceTestStackSourceQueue7DDB12C004B6C492": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "BatchSize": 1,
+    "EventSourceArn": {
+     "Fn::GetAtt": [
+      "SourceQueue6E809DF0",
+      "Arn"
+     ]
+    },
+    "FunctionName": {
+     "Ref": "SingletonLambda8675309a123456789abcdef0123456789BFBF4B41"
+    },
+    "FunctionResponseTypes": [
+     "ReportBatchItemFailures"
+    ]
+   }
+  },
+  "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleAAD8545D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleDefaultPolicy490A93B8": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "states:StartExecution",
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "DispatcherStateMachineD656F044"
+       }
+      },
+      {
+       "Action": [
+        "sqs:ChangeMessageVisibility",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ReceiveMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "SourceQueue6E809DF0",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleDefaultPolicy490A93B8",
+    "Roles": [
+     {
+      "Ref": "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleAAD8545D"
+     }
+    ]
+   }
+  },
+  "SingletonLambda8675309a123456789abcdef0123456789BFBF4B41": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "\n        const { SFNClient, StartExecutionCommand } = require('@aws-sdk/client-sfn');\n        \n        const sfnClient = new SFNClient();\n        const dispatcherStateMachineArn = process.env.STATE_MACHINE_ARN;\n        \n        // Get queue to state machine mappings from environment variables\n        const queueToStateMachineMap = new Map();\n        \n        // Parse environment variables that follow the pattern QUEUE_*\n        Object.keys(process.env).forEach(key => {\n          if (key.startsWith('QUEUE_')) {\n            const queueName = key.substring(6); // Remove 'QUEUE_' prefix\n            const queueUrl = process.env[key];\n            const stateMachineArn = process.env['TARGET_' + queueName];\n            \n            if (queueUrl && stateMachineArn) {\n              queueToStateMachineMap.set(queueUrl, stateMachineArn);\n              console.log(`Mapped queue ${queueUrl} to state machine ${stateMachineArn}`);\n            }\n          }\n        });\n\n        /**\n         * Lambda function that receives SQS messages and forwards them to the dispatcher state machine.\n         * It marks all messages as failed so that the Step Function remains responsible for deleting them.\n         */\n        exports.handler = async (event, context) => {\n          console.log(`Received ${event.Records.length} messages`, JSON.stringify(event, null, 2));\n          \n          if (event.Records.length === 0) {\n            return { batchItemFailures: [] };\n          }\n        \n          try {\n            // Get the queue URL from the event source ARN\n            const queueUrl = event.Records[0].eventSourceARN;\n            \n            // Find the target state machine ARN for this queue\n            let targetStateMachineArn;\n            for (const [mappedQueueUrl, mappedArn] of queueToStateMachineMap.entries()) {\n              if (queueUrl.endsWith(mappedQueueUrl)) {\n                targetStateMachineArn = mappedArn;\n                break;\n              }\n            }\n            \n            if (!targetStateMachineArn) {\n              throw new Error(`No target state machine found for queue: ${queueUrl}`);\n            }\n            \n            console.log(`Using target state machine: ${targetStateMachineArn} for queue: ${queueUrl}`);\n            \n            // Start a new execution of the state machine with the batch of messages\n            const input = {\n              Messages: event.Records.map(record => ({\n                Body: record.body,\n                ReceiptHandle: record.receiptHandle,\n                MessageId: record.messageId,\n                Attributes: record.attributes,\n                MessageAttributes: record.messageAttributes,\n              })),\n              targetStateMachineArn: targetStateMachineArn\n            };\n        \n            const command = new StartExecutionCommand({\n              stateMachineArn: dispatcherStateMachineArn,\n              input: JSON.stringify(input),\n            });\n        \n            await sfnClient.send(command);\n            console.log(`Successfully started state machine execution with ${event.Records.length} messages`);\n            \n            // Return all messages as failed so SQS won't delete them\n            // The Step Function will be responsible for deleting messages after processing\n            const batchItemFailures = event.Records.map(record => ({\n              itemIdentifier: record.messageId\n            }));\n            \n            return {\n              batchItemFailures\n            };\n          } catch (error) {\n            console.error('Error starting state machine execution:', error);\n            \n            // Return all messages as failed so they'll be retried\n            const batchItemFailures = event.Records.map(record => ({\n              itemIdentifier: record.messageId\n            }));\n            \n            return {\n              batchItemFailures\n            };\n          }\n        };\n      "
+    },
+    "Description": "Lambda function that receives SQS messages and triggers the dispatcher state machine",
+    "Environment": {
+     "Variables": {
+      "STATE_MACHINE_ARN": {
+       "Ref": "DispatcherStateMachineD656F044"
+      },
+      "QUEUE_SourceQueue": {
+       "Fn::GetAtt": [
+        "SourceQueue6E809DF0",
+        "Arn"
+       ]
+      },
+      "TARGET_SourceQueue": {
+       "Ref": "TargetStateMachineF037FA98"
+      }
+     }
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleAAD8545D",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleDefaultPolicy490A93B8",
+    "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleAAD8545D"
+   ]
+  }
+ },
+ "Outputs": {
+  "ExportsOutputRefSourceQueue6E809DF09604904F": {
+   "Value": {
+    "Ref": "SourceQueue6E809DF0"
+   },
+   "Export": {
+    "Name": "TestStack:ExportsOutputRefSourceQueue6E809DF09604904F"
+   }
+  },
+  "ExportsOutputFnGetAttSourceQueue6E809DF0Arn9621F069": {
+   "Value": {
+    "Fn::GetAtt": [
+     "SourceQueue6E809DF0",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "TestStack:ExportsOutputFnGetAttSourceQueue6E809DF0Arn9621F069"
+   }
+  },
+  "ExportsOutputRefTargetStateMachineF037FA9873510E3A": {
+   "Value": {
+    "Ref": "TargetStateMachineF037FA98"
+   },
+   "Export": {
+    "Name": "TestStack:ExportsOutputRefTargetStateMachineF037FA9873510E3A"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
