@@ -13,23 +13,7 @@ Either way, the state machine processing SQS messages can not not be focused pur
 
 ## Solution Architecture
 
-```
-┌─────────┐     ┌──────────────┐     ┌─────────────────────┐     ┌─────────────────┐
-│         │     │              │     │                     │     │                 │
-│   SQS   │────▶│ Lambda       │────▶│ Dispatcher          │────▶│ Target          │
-│  Queue  │     │ Trigger      │     │ Step Function       │     │ Step Function   │
-│         │     │ Function     │     │ (Map State)         │     │ (Your Logic)    │
-└─────────┘     └──────────────┘     └─────────────────────┘     └─────────────────┘
-                                              │
-                                              │ Success/Failure tracking
-                                              ▼
-                                     ┌─────────────────────┐
-                                     │                     │
-                                     │ Delete Successfully │
-                                     │ Processed Messages  │
-                                     │                     │
-                                     └─────────────────────┘
-```
+![Diagram](./diagram.png)
 
 The solution uses a singleton Lambda function that retrieves messages from the queue and forwards them to the dispatcher state machine. Then the state machine processes messages in parallel, sending each message to the target state machine and deletes successfully processed messages.
 
