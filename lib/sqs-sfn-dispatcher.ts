@@ -6,6 +6,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
 import { Stack, Duration } from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
+import { SingletonStateMachine } from "./singleton-state-machine";
 
 interface SqsSfnDispatcherProps {
   source: sqs.IQueue;
@@ -89,9 +90,14 @@ export class SqsSfnDispatcher extends Construct {
       .otherwise(new sfn.Succeed(this, "NoMessages"));
     mapState.next(hasMessages);
 
-    const stateMachine = new sfn.StateMachine(this, "StateMachine", {
-      definitionBody: sfn.DefinitionBody.fromChainable(mapState),
-    });
+    const stateMachine = SingletonStateMachine.getOrCreate(
+      this,
+      "StateMachine",
+      "c9b6cb1e-fa0e-47e4-a730-ef953c53d3f7",
+      {
+        definitionBody: sfn.DefinitionBody.fromChainable(mapState),
+      }
+    );
 
     // Grant permission to start executions of the target state machine
     props.target.grantStartExecution(stateMachine.role);
