@@ -240,11 +240,11 @@ export class SqsStepFunctionDispatcher extends Construct {
       }
     );
     this.triggerFunction.addEnvironment(
-      `QUEUE_${props.source.node.id}`,
+      `QUEUE_${props.source.node.addr}`,
       props.source.queueArn
     );
     this.triggerFunction.addEnvironment(
-      `TARGET_${props.source.node.id}`,
+      `TARGET_${props.source.node.addr}`,
       props.target.stateMachineArn
     );
 
