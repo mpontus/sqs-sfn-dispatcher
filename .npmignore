@@ -4,3 +4,10 @@
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+# Exclude example cdk project and tests
+/example
+/test
+/jest.config.js
+/tsconfig.json
+/diagram.png
