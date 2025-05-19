@@ -3,6 +3,11 @@ import { Stack } from "aws-cdk-lib";
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import { Construct } from "constructs";
 
+export interface SingletonStateMachineProps extends sfn.StateMachineProps {
+  stateMachinePurpose?: string;
+  uuid: string;
+}
+
 /**
  * A singleton state machine that ensures only one instance exists per account/region
  */
@@ -13,11 +18,12 @@ export class SingletonStateMachine extends sfn.StateMachine {
   public static getOrCreate(
     scope: Construct,
     id: string,
-    uuid: string,
-    props: sfn.StateMachineProps
+    props: SingletonStateMachineProps
   ): sfn.StateMachine {
     const stack = Stack.of(scope);
-    const uniqueId = `SingletonStateMachine-${uuid}`;
+    const uniqueId = `${props.stateMachinePurpose ?? "SingletonStateMachine"}-${
+      props.uuid
+    }`;
 
     // Check if this state machine already exists
     const existing = stack.node.tryFindChild(uniqueId) as sfn.StateMachine;
@@ -32,7 +38,7 @@ export class SingletonStateMachine extends sfn.StateMachine {
   private constructor(
     scope: Construct,
     id: string,
-    props: sfn.StateMachineProps
+    props: SingletonStateMachineProps
   ) {
     super(scope, id, props);
   }

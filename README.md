@@ -1,4 +1,4 @@
-# SQS to Step Functions Dispatcher
+# SQS Step Functions Dispatcher
 
 CDK construct for dispatching messages from AWS SQS to Step Functions state machines.
 
@@ -20,10 +20,10 @@ The solution uses a singleton Lambda function that retrieves messages from the q
 ## Usage
 
 ```typescript
-import { SqsSfnDispatcher } from "sqs-sfn-dispatcher";
+import { SqsStepFunctionsDispatcher } from "sqs-sfn-dispatcher";
 
 // Create a dispatcher that connects your SQS queue to your Step Function
-const dispatcher = new SqsSfnDispatcher(this, "MyDispatcher", {
+const dispatcher = new SqsStepFunctionsDispatcher(this, "MyDispatcher", {
   source: myQueue,
   target: myStateMachine,
 });

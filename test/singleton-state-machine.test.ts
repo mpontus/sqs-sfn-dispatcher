@@ -16,8 +16,8 @@ describe("SingletonStateMachine", () => {
     const stateMachine = SingletonStateMachine.getOrCreate(
       stack,
       "TestStateMachine",
-      "test-uuid-123",
       {
+        uuid: "test-uuid-123",
         definitionBody: sfn.DefinitionBody.fromChainable(passState),
         stateMachineName: "TestStateMachine",
       }
@@ -50,8 +50,8 @@ describe("SingletonStateMachine", () => {
     const firstStateMachine = SingletonStateMachine.getOrCreate(
       stack,
       "FirstStateMachine",
-      uuid,
       {
+        uuid,
         definitionBody: sfn.DefinitionBody.fromChainable(passState1),
         stateMachineName: "FirstStateMachine",
       }
@@ -61,8 +61,8 @@ describe("SingletonStateMachine", () => {
     const secondStateMachine = SingletonStateMachine.getOrCreate(
       stack,
       "SecondStateMachine",
-      uuid,
       {
+        uuid,
         definitionBody: sfn.DefinitionBody.fromChainable(passState2),
         stateMachineName: "SecondStateMachine",
       }
@@ -102,8 +102,8 @@ describe("SingletonStateMachine", () => {
     const firstStateMachine = SingletonStateMachine.getOrCreate(
       stack,
       "FirstStateMachine",
-      "uuid-1",
       {
+        uuid: "uuid-1",
         definitionBody: sfn.DefinitionBody.fromChainable(passState1),
         stateMachineName: "FirstStateMachine",
       }
@@ -112,8 +112,8 @@ describe("SingletonStateMachine", () => {
     const secondStateMachine = SingletonStateMachine.getOrCreate(
       stack,
       "SecondStateMachine",
-      "uuid-2",
       {
+        uuid: "uuid-2",
         definitionBody: sfn.DefinitionBody.fromChainable(passState2),
         stateMachineName: "SecondStateMachine",
       }

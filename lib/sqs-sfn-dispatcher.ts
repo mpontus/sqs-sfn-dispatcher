@@ -8,18 +8,22 @@ import { Stack, Duration } from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { SingletonStateMachine } from "./singleton-state-machine";
 
-interface SqsSfnDispatcherProps {
+interface SqsStepFunctionDispatcherProps {
   source: sqs.IQueue;
   target: sfn.IStateMachine;
   batchSize?: number;
   maxBatchingWindow?: Duration;
 }
 
-export class SqsSfnDispatcher extends Construct {
+export class SqsStepFunctionDispatcher extends Construct {
   public stateMachine: sfn.StateMachine;
   public triggerFunction: lambda.SingletonFunction;
 
-  constructor(scope: Construct, id: string, props: SqsSfnDispatcherProps) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: SqsStepFunctionDispatcherProps
+  ) {
     super(scope, id);
 
     const mapState = new sfn.Map(this, "Map", {
@@ -92,9 +96,10 @@ export class SqsSfnDispatcher extends Construct {
 
     const stateMachine = SingletonStateMachine.getOrCreate(
       this,
-      "StateMachine",
-      "c9b6cb1e-fa0e-47e4-a730-ef953c53d3f7",
+      "DispatcherStateMachine",
       {
+        stateMachinePurpose: "DispatcherStateMachine",
+        uuid: "c9b6cb1e-fa0e-47e4-a730-ef953c53d3f7",
         definitionBody: sfn.DefinitionBody.fromChainable(mapState),
       }
     );
@@ -124,9 +129,10 @@ export class SqsSfnDispatcher extends Construct {
     // Create the Lambda function that will trigger the state machine with inline code
     this.triggerFunction = new lambda.SingletonFunction(
       this,
-      "TriggerFunction",
+      "DispatcherTriggerFunction",
       {
-        uuid: "8675309a-1234-5678-9abc-def0123456789", // Unique identifier for the singleton function
+        lambdaPurpose: "DispatcherTriggerFunction",
+        uuid: "8675309a-1234-5678-9abc-def0123456789",
         runtime: lambda.Runtime.NODEJS_18_X,
         handler: "index.handler",
         code: lambda.Code.fromInline(`

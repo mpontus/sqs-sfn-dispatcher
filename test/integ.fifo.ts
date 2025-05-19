@@ -1,8 +1,8 @@
 import { App, Stack, Duration } from "aws-cdk-lib";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
-import { ExpectedResult, IntegTest, Match } from "@aws-cdk/integ-tests-alpha";
-import { SqsSfnDispatcher } from "../lib/sqs-sfn-dispatcher";
+import { ExpectedResult, IntegTest } from "@aws-cdk/integ-tests-alpha";
+import { SqsStepFunctionDispatcher } from "../lib/sqs-sfn-dispatcher";
 
 const app = new App();
 const stack = new Stack(app, "TestStack");
@@ -20,7 +20,7 @@ const queue = new sqs.Queue(stack, "SourceQueue", {
 });
 
 // Create the dispatcher
-const dispatcher = new SqsSfnDispatcher(stack, "Dispatcher", {
+const dispatcher = new SqsStepFunctionDispatcher(stack, "Dispatcher", {
   source: queue,
   target: targetStateMachine,
 });
