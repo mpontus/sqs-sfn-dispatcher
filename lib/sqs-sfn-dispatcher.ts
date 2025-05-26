@@ -78,7 +78,7 @@ export class SqsStepFunctionDispatcher extends Construct {
         service: "sqs",
         action: "deleteMessageBatch",
         parameters: {
-          QueueUrl: props.source.queueUrl,
+          "QueueUrl.$": "$$.Execution.Input.queueUrl",
           "Entries.$": "$.processedMessages",
         },
         iamResources: [props.source.queueArn],
@@ -190,6 +190,7 @@ export class SqsStepFunctionDispatcher extends Construct {
             
             // Start a new execution of the state machine with the batch of messages
             const input = {
+              queueUrl, // pass queue url to delete processed messages
               Messages: event.Records.map(record => ({
                 Body: record.body,
                 ReceiptHandle: record.receiptHandle,
