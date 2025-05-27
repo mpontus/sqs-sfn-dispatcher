@@ -66,4 +66,27 @@ listExecutions
 
 sendMessages.next(listExecutions);
 
+// Check remaining messages in the queue
+const getQueueAttributes = integ.assertions.awsApiCall(
+  "SQS",
+  "getQueueAttributes",
+  {
+    QueueUrl: queue.queueUrl,
+    AttributeNames: ["ApproximateNumberOfMessagesNotVisible"],
+  }
+);
+getQueueAttributes.provider.addPolicyStatementFromSdkCall(
+  "sqs",
+  "getQueueAttributes",
+  [queue.queueArn]
+);
+
+getQueueAttributes.expect(
+  ExpectedResult.objectLike({
+    Attributes: {
+      ApproximateNumberOfMessagesNotVisible: "0",
+    },
+  })
+);
+
 app.synth();

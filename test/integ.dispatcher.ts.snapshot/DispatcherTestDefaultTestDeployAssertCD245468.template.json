@@ -27,7 +27,7 @@
      "Entries": "[{\"Id\":\"0\",\"MessageBody\":\"{\\\"data\\\":\\\"message0\\\"}\"},{\"Id\":\"1\",\"MessageBody\":\"{\\\"data\\\":\\\"message1\\\"}\"},{\"Id\":\"2\",\"MessageBody\":\"{\\\"data\\\":\\\"message2\\\"}\"},{\"Id\":\"3\",\"MessageBody\":\"{\\\"data\\\":\\\"message3\\\"}\"},{\"Id\":\"4\",\"MessageBody\":\"{\\\"data\\\":\\\"message4\\\"}\"}]"
     },
     "flattenResponse": "false",
-    "salt": "1746799831683"
+    "salt": "1748381509675"
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
@@ -95,6 +95,26 @@
          "Resource": [
           "*"
          ]
+        },
+        {
+         "Action": [
+          "sqs:GetQueueAttributes"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          "*"
+         ]
+        },
+        {
+         "Action": [
+          "sqs:GetQueueAttributes"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          {
+           "Fn::ImportValue": "TestStack:ExportsOutputFnGetAttSourceQueue6E809DF0Arn9621F069"
+          }
+         ]
         }
        ]
       }
@@ -160,7 +180,7 @@
      }
     },
     "flattenResponse": "false",
-    "salt": "1746799831687"
+    "salt": "1748381509676"
    },
    "DependsOn": [
     "AwsApiCallSQSsendMessageBatch14ffb757fbbda104c9e700e20994bb23"
@@ -413,6 +433,39 @@
      ]
     }
    }
+  },
+  "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745": {
+   "Type": "Custom::DeployAssert@SdkCallSQSgetQueueAttributes",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "SingletonFunction1488541a7b23466481b69b4408076b81HandlerCD40AE9F",
+      "Arn"
+     ]
+    },
+    "service": "SQS",
+    "api": "getQueueAttributes",
+    "expected": "{\"$ObjectLike\":{\"Attributes\":{\"ApproximateNumberOfMessagesNotVisible\":\"0\"}}}",
+    "parameters": {
+     "QueueUrl": {
+      "Fn::Join": [
+       "",
+       [
+        "\"",
+        {
+         "Fn::ImportValue": "TestStack:ExportsOutputRefSourceQueue6E809DF09604904F"
+        },
+        "\""
+       ]
+      ]
+     },
+     "AttributeNames": "[\"ApproximateNumberOfMessagesNotVisible\"]"
+    },
+    "flattenResponse": "false",
+    "salt": "1748381509679"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
   }
  },
  "Mappings": {
@@ -544,6 +597,14 @@
    "Value": {
     "Fn::GetAtt": [
      "AwsApiCallStepFunctionslistExecutions383174ff82bab26ba9fd006ed1300228",
+     "assertion"
+    ]
+   }
+  },
+  "AssertionResultsAwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745": {
+   "Value": {
+    "Fn::GetAtt": [
+     "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745",
      "assertion"
     ]
    }
