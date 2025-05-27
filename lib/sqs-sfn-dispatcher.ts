@@ -171,16 +171,12 @@ export class SqsStepFunctionDispatcher extends Construct {
         
           try {
             // Get the queue URL from the event source ARN
-            const queueUrl = event.Records[0].eventSourceARN;
+            const queueArn = event.Records[0].eventSourceARN;
+            const parts = queueArn.split(":");
+            const queueUrl = \`https://sqs.\${parts[3]}.amazonaws.com/\${parts[4]}/\${parts[5]}\`;
             
             // Find the target state machine ARN for this queue
-            let targetStateMachineArn;
-            for (const [mappedQueueUrl, mappedArn] of queueToStateMachineMap.entries()) {
-              if (queueUrl.endsWith(mappedQueueUrl)) {
-                targetStateMachineArn = mappedArn;
-                break;
-              }
-            }
+            const targetStateMachineArn = queueToStateMachineMap.get(queueUrl);
             
             if (!targetStateMachineArn) {
               throw new Error(\`No target state machine found for queue: \${queueUrl}\`);
@@ -242,7 +238,7 @@ export class SqsStepFunctionDispatcher extends Construct {
     );
     this.triggerFunction.addEnvironment(
       `QUEUE_${props.source.node.addr}`,
-      props.source.queueArn
+      props.source.queueUrl
     );
     this.triggerFunction.addEnvironment(
       `TARGET_${props.source.node.addr}`,

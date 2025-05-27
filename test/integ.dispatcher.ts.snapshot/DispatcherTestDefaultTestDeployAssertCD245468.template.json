@@ -27,7 +27,7 @@
      "Entries": "[{\"Id\":\"0\",\"MessageBody\":\"{\\\"data\\\":\\\"message0\\\"}\"},{\"Id\":\"1\",\"MessageBody\":\"{\\\"data\\\":\\\"message1\\\"}\"},{\"Id\":\"2\",\"MessageBody\":\"{\\\"data\\\":\\\"message2\\\"}\"},{\"Id\":\"3\",\"MessageBody\":\"{\\\"data\\\":\\\"message3\\\"}\"},{\"Id\":\"4\",\"MessageBody\":\"{\\\"data\\\":\\\"message4\\\"}\"}]"
     },
     "flattenResponse": "false",
-    "salt": "1748381509675"
+    "salt": "1748386573639"
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
@@ -180,7 +180,7 @@
      }
     },
     "flattenResponse": "false",
-    "salt": "1748381509676"
+    "salt": "1748386573640"
    },
    "DependsOn": [
     "AwsApiCallSQSsendMessageBatch14ffb757fbbda104c9e700e20994bb23"
@@ -462,7 +462,7 @@
      "AttributeNames": "[\"ApproximateNumberOfMessagesNotVisible\"]"
     },
     "flattenResponse": "false",
-    "salt": "1748381509679"
+    "salt": "1748386573644"
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"

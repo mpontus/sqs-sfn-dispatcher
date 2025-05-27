@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/ef00319feca56b8a0e4eac381963780c57d22d0b07b44687b8a76b1eb22d2cbe.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c9b7293c88bd1a25e04c24705f854c43a884b38c967394f381e46951b01dfff8.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -483,69 +483,6 @@
             "type": "aws:cdk:logicalId",
             "data": "CheckBootstrapVersion"
           }
-        ],
-        "DispatcherStateMachineRole8DD0EF08": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "DispatcherStateMachineRole8DD0EF08",
-            "trace": [
-              "!!DESTRUCTIVE_CHANGES: WILL_DESTROY"
-            ]
-          }
-        ],
-        "DispatcherStateMachineRoleDefaultPolicy724CDF2B": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "DispatcherStateMachineRoleDefaultPolicy724CDF2B",
-            "trace": [
-              "!!DESTRUCTIVE_CHANGES: WILL_DESTROY"
-            ]
-          }
-        ],
-        "DispatcherStateMachineD656F044": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "DispatcherStateMachineD656F044",
-            "trace": [
-              "!!DESTRUCTIVE_CHANGES: WILL_DESTROY"
-            ]
-          }
-        ],
-        "DispatcherTriggerFunctionSqsEventSourceTestStackSourceQueue7DDB12C004B6C492": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "DispatcherTriggerFunctionSqsEventSourceTestStackSourceQueue7DDB12C004B6C492",
-            "trace": [
-              "!!DESTRUCTIVE_CHANGES: WILL_DESTROY"
-            ]
-          }
-        ],
-        "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleAAD8545D": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleAAD8545D",
-            "trace": [
-              "!!DESTRUCTIVE_CHANGES: WILL_DESTROY"
-            ]
-          }
-        ],
-        "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleDefaultPolicy490A93B8": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleDefaultPolicy490A93B8",
-            "trace": [
-              "!!DESTRUCTIVE_CHANGES: WILL_DESTROY"
-            ]
-          }
-        ],
-        "SingletonLambda8675309a123456789abcdef0123456789BFBF4B41": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SingletonLambda8675309a123456789abcdef0123456789BFBF4B41",
-            "trace": [
-              "!!DESTRUCTIVE_CHANGES: WILL_DESTROY"
-            ]
-          }
         ]
       },
       "displayName": "TestStack"
@@ -567,7 +504,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/6365b1a5d961f4a050e63ec4572a7cc125d722dc80b63c46c877db1a60da4426.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/bb078ee270b22d6d71505dd96b8d8fe2bb35275d6d396b1d94344f608cd34489.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [

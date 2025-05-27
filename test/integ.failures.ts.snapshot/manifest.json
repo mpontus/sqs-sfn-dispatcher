@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/915487a4e9d08946b72f238fb96602e53be9d7736bd2b78b6388f10f6a27796f.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/f534a79d1e60d99a7e37d0c1550bb514335f6030c7e430bc398a44cca7b398e8.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -85,7 +85,63 @@
             "data": "SourceQueue6E809DF0"
           }
         ],
-        "/TestStack/Dispatcher/StateMachine": [
+        "/TestStack/Dispatcher/DispatcherTriggerFunction": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "lambdaPurpose": "*",
+              "uuid": "*",
+              "runtime": "*",
+              "handler": "*",
+              "code": "*",
+              "environment": "*",
+              "description": "*",
+              "timeout": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          }
+        ],
+        "/TestStack/Dispatcher/DispatcherTriggerFunction/SqsEventSource:TestStackSourceQueue7DDB12C0": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "target": "*",
+              "batchSize": "*",
+              "maxBatchingWindow": "*",
+              "maxConcurrency": "*",
+              "reportBatchItemFailures": true,
+              "enabled": "*",
+              "eventSourceArn": "*",
+              "filters": "*",
+              "filterEncryption": "*",
+              "metricsConfig": "*"
+            }
+          }
+        ],
+        "/TestStack/Dispatcher/DispatcherTriggerFunction/SqsEventSource:TestStackSourceQueue7DDB12C0/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DispatcherDispatcherTriggerFunctionSqsEventSourceTestStackSourceQueue7DDB12C01B17F488"
+          }
+        ],
+        "/TestStack/DispatcherStateMachine-c9b6cb1e-fa0e-47e4-a730-ef953c53d3f7": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": {
@@ -107,25 +163,9 @@
                 {}
               ]
             }
-          },
-          {
-            "type": "aws:cdk:analytics:method",
-            "data": {
-              "addToRolePolicy": [
-                {}
-              ]
-            }
-          },
-          {
-            "type": "aws:cdk:analytics:method",
-            "data": {
-              "addToRolePolicy": [
-                {}
-              ]
-            }
           }
         ],
-        "/TestStack/Dispatcher/StateMachine/Role": [
+        "/TestStack/DispatcherStateMachine-c9b6cb1e-fa0e-47e4-a730-ef953c53d3f7/Role": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": {
@@ -182,29 +222,21 @@
                 {}
               ]
             }
-          },
-          {
-            "type": "aws:cdk:analytics:method",
-            "data": {
-              "addToPrincipalPolicy": [
-                {}
-              ]
-            }
           }
         ],
-        "/TestStack/Dispatcher/StateMachine/Role/ImportRole": [
+        "/TestStack/DispatcherStateMachine-c9b6cb1e-fa0e-47e4-a730-ef953c53d3f7/Role/ImportRole": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": "*"
           }
         ],
-        "/TestStack/Dispatcher/StateMachine/Role/Resource": [
+        "/TestStack/DispatcherStateMachine-c9b6cb1e-fa0e-47e4-a730-ef953c53d3f7/Role/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "DispatcherStateMachineRole8DD0EF08"
+            "data": "DispatcherStateMachinec9b6cb1efa0e47e4a730ef953c53d3f7Role722DABC6"
           }
         ],
-        "/TestStack/Dispatcher/StateMachine/Role/DefaultPolicy": [
+        "/TestStack/DispatcherStateMachine-c9b6cb1e-fa0e-47e4-a730-ef953c53d3f7/Role/DefaultPolicy": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": "*"
@@ -256,66 +288,21 @@
                 {}
               ]
             }
-          },
-          {
-            "type": "aws:cdk:analytics:method",
-            "data": {
-              "addStatements": [
-                {}
-              ]
-            }
           }
         ],
-        "/TestStack/Dispatcher/StateMachine/Role/DefaultPolicy/Resource": [
+        "/TestStack/DispatcherStateMachine-c9b6cb1e-fa0e-47e4-a730-ef953c53d3f7/Role/DefaultPolicy/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "DispatcherStateMachineRoleDefaultPolicy724CDF2B"
+            "data": "DispatcherStateMachinec9b6cb1efa0e47e4a730ef953c53d3f7RoleDefaultPolicyE9B02975"
           }
         ],
-        "/TestStack/Dispatcher/StateMachine/Resource": [
+        "/TestStack/DispatcherStateMachine-c9b6cb1e-fa0e-47e4-a730-ef953c53d3f7/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "DispatcherStateMachineD656F044"
+            "data": "DispatcherStateMachinec9b6cb1efa0e47e4a730ef953c53d3f77366D9BB"
           }
         ],
-        "/TestStack/Dispatcher/TriggerFunction": [
-          {
-            "type": "aws:cdk:analytics:construct",
-            "data": {
-              "uuid": "*",
-              "runtime": "*",
-              "handler": "*",
-              "code": "*",
-              "environment": "*",
-              "description": "*",
-              "timeout": "*"
-            }
-          }
-        ],
-        "/TestStack/Dispatcher/TriggerFunction/SqsEventSource:TestStackSourceQueue7DDB12C0": [
-          {
-            "type": "aws:cdk:analytics:construct",
-            "data": {
-              "target": "*",
-              "batchSize": "*",
-              "maxBatchingWindow": "*",
-              "maxConcurrency": "*",
-              "reportBatchItemFailures": true,
-              "enabled": "*",
-              "eventSourceArn": "*",
-              "filters": "*",
-              "filterEncryption": "*",
-              "metricsConfig": "*"
-            }
-          }
-        ],
-        "/TestStack/Dispatcher/TriggerFunction/SqsEventSource:TestStackSourceQueue7DDB12C0/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "DispatcherTriggerFunctionSqsEventSourceTestStackSourceQueue7DDB12C004B6C492"
-          }
-        ],
-        "/TestStack/SingletonLambda8675309a123456789abcdef0123456789": [
+        "/TestStack/DispatcherTriggerFunction8675309a123456789abcdef0123456789": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": {
@@ -335,9 +322,29 @@
                 "*"
               ]
             }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*",
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*",
+                "*"
+              ]
+            }
           }
         ],
-        "/TestStack/SingletonLambda8675309a123456789abcdef0123456789/ServiceRole": [
+        "/TestStack/DispatcherTriggerFunction8675309a123456789abcdef0123456789/ServiceRole": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": {
@@ -385,19 +392,19 @@
             }
           }
         ],
-        "/TestStack/SingletonLambda8675309a123456789abcdef0123456789/ServiceRole/ImportServiceRole": [
+        "/TestStack/DispatcherTriggerFunction8675309a123456789abcdef0123456789/ServiceRole/ImportServiceRole": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": "*"
           }
         ],
-        "/TestStack/SingletonLambda8675309a123456789abcdef0123456789/ServiceRole/Resource": [
+        "/TestStack/DispatcherTriggerFunction8675309a123456789abcdef0123456789/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleAAD8545D"
+            "data": "DispatcherTriggerFunction8675309a123456789abcdef0123456789ServiceRole0809A1B0"
           }
         ],
-        "/TestStack/SingletonLambda8675309a123456789abcdef0123456789/ServiceRole/DefaultPolicy": [
+        "/TestStack/DispatcherTriggerFunction8675309a123456789abcdef0123456789/ServiceRole/DefaultPolicy": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": "*"
@@ -435,16 +442,16 @@
             }
           }
         ],
-        "/TestStack/SingletonLambda8675309a123456789abcdef0123456789/ServiceRole/DefaultPolicy/Resource": [
+        "/TestStack/DispatcherTriggerFunction8675309a123456789abcdef0123456789/ServiceRole/DefaultPolicy/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "SingletonLambda8675309a123456789abcdef0123456789ServiceRoleDefaultPolicy490A93B8"
+            "data": "DispatcherTriggerFunction8675309a123456789abcdef0123456789ServiceRoleDefaultPolicyAF2EDD4A"
           }
         ],
-        "/TestStack/SingletonLambda8675309a123456789abcdef0123456789/Resource": [
+        "/TestStack/DispatcherTriggerFunction8675309a123456789abcdef0123456789/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "SingletonLambda8675309a123456789abcdef0123456789BFBF4B41"
+            "data": "DispatcherTriggerFunction8675309a123456789abcdef01234567894274770C"
           }
         ],
         "/TestStack/Exports/Output{\"Ref\":\"SourceQueue6E809DF0\"}": [
@@ -497,7 +504,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/7fc04f5d63ca3a3317f58312d9c88d18f85da44df0405fbf03d605a6f1c86e67.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/3e318d5b214408c6adbe4ca621efbc64918d2d5a2734e5670c8c9ff142176dc9.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
