@@ -1,0 +1,33 @@
+name: Run tests
+
+on:
+  push:
+  #   branches: [ main ]
+  # pull_request:
+  #   branches: [ main ]
+  # workflow_dispatch:
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: us-east-1
+
+      - name: Run integration tests
+        run: npx integ-runner --directory test --update-on-failed --parallel-regions us-east-1
+        env:
+          CDK_INTEG_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
+          CDK_INTEG_REGION: us-east-1
