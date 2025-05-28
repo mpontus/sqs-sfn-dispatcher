@@ -1,12 +1,13 @@
-name: Run tests
+name: Test and Publish
 
 on:
   push:
-    branches:
-      - master
+
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
-  integration-tests:
+  integ-tests:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -28,7 +29,29 @@ jobs:
         run: npx cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-east-1
 
       - name: Run integration tests
-        run: npx integ-runner --force --parallel-regions us-east-1
+        run: npx integ-runner 
         env:
           CDK_INTEG_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
           CDK_INTEG_REGION: us-east-1
+
+  publish:
+    needs: integ-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+
+      - name: Publish to npm
+        run: npx release-it -VV
