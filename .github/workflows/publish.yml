@@ -1,0 +1,66 @@
+name: Test and Publish
+
+on:
+  push:
+
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+permissions:
+  contents: write
+
+jobs:
+  integ-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: us-east-1
+
+      - name: Bootstrap CDK toolkit
+        run: npx cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-east-1
+
+      - name: Run integration tests
+        run: npx integ-runner 
+        env:
+          CDK_INTEG_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
+          CDK_INTEG_REGION: us-east-1
+
+  publish:
+    needs: integ-tests
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+
+      - name: Setup git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Publish to npm
+        run: npx release-it -VV
