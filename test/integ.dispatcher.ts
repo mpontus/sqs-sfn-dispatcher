@@ -81,12 +81,16 @@ getQueueAttributes.provider.addPolicyStatementFromSdkCall(
   [queue.queueArn]
 );
 
-getQueueAttributes.expect(
-  ExpectedResult.objectLike({
-    Attributes: {
-      ApproximateNumberOfMessagesNotVisible: "0",
-    },
-  })
-);
+getQueueAttributes
+  .expect(
+    ExpectedResult.objectLike({
+      Attributes: {
+        ApproximateNumberOfMessagesNotVisible: "0",
+      },
+    })
+  )
+  .waitForAssertions({
+    totalTimeout: Duration.seconds(30),
+  });
 
 app.synth();

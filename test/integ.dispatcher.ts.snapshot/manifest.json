@@ -504,7 +504,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/bb078ee270b22d6d71505dd96b8d8fe2bb35275d6d396b1d94344f608cd34489.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/dcab5370169a61bf23b43fd37bfdb1493665e6dfdcf4b76880869234d32de617.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -643,6 +643,30 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745"
+          }
+        ],
+        "/DispatcherTest/DefaultTest/DeployAssert/AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745/WaitFor/IsCompleteProvider/Invoke": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitForIsCompleteProviderInvokeECA40365"
+          }
+        ],
+        "/DispatcherTest/DefaultTest/DeployAssert/AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745/WaitFor/TimeoutProvider/Invoke": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitForTimeoutProviderInvokeFA59CD37"
+          }
+        ],
+        "/DispatcherTest/DefaultTest/DeployAssert/AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745/WaitFor/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitForRoleC6F268FE"
+          }
+        ],
+        "/DispatcherTest/DefaultTest/DeployAssert/AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745/WaitFor/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitFor095DF02B"
           }
         ],
         "/DispatcherTest/DefaultTest/DeployAssert/AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745/AssertionResults": [

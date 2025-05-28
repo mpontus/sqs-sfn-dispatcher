@@ -27,7 +27,7 @@
      "Entries": "[{\"Id\":\"0\",\"MessageBody\":\"{\\\"data\\\":\\\"message0\\\"}\"},{\"Id\":\"1\",\"MessageBody\":\"{\\\"data\\\":\\\"message1\\\"}\"},{\"Id\":\"2\",\"MessageBody\":\"{\\\"data\\\":\\\"message2\\\"}\"},{\"Id\":\"3\",\"MessageBody\":\"{\\\"data\\\":\\\"message3\\\"}\"},{\"Id\":\"4\",\"MessageBody\":\"{\\\"data\\\":\\\"message4\\\"}\"}]"
     },
     "flattenResponse": "false",
-    "salt": "1748386573639"
+    "salt": "1748392649085"
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
@@ -115,6 +115,15 @@
            "Fn::ImportValue": "TestStack:ExportsOutputFnGetAttSourceQueue6E809DF0Arn9621F069"
           }
          ]
+        },
+        {
+         "Action": [
+          "states:StartExecution"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          "*"
+         ]
         }
        ]
       }
@@ -180,7 +189,7 @@
      }
     },
     "flattenResponse": "false",
-    "salt": "1748386573640"
+    "salt": "1748392649086"
    },
    "DependsOn": [
     "AwsApiCallSQSsendMessageBatch14ffb757fbbda104c9e700e20994bb23"
@@ -349,6 +358,15 @@
          "Resource": [
           "*"
          ]
+        },
+        {
+         "Action": [
+          "sqs:GetQueueAttributes"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          "*"
+         ]
         }
        ]
       }
@@ -446,6 +464,9 @@
     "service": "SQS",
     "api": "getQueueAttributes",
     "expected": "{\"$ObjectLike\":{\"Attributes\":{\"ApproximateNumberOfMessagesNotVisible\":\"0\"}}}",
+    "stateMachineArn": {
+     "Ref": "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitFor095DF02B"
+    },
     "parameters": {
      "QueueUrl": {
       "Fn::Join": [
@@ -462,10 +483,127 @@
      "AttributeNames": "[\"ApproximateNumberOfMessagesNotVisible\"]"
     },
     "flattenResponse": "false",
-    "salt": "1748386573644"
+    "salt": "1748392649089"
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
+  },
+  "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitForIsCompleteProviderInvokeECA40365": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SingletonFunction76b3e830a873425f8453eddd85c86925Handler81461ECE",
+      "Arn"
+     ]
+    },
+    "Principal": {
+     "Fn::GetAtt": [
+      "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitForRoleC6F268FE",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitForTimeoutProviderInvokeFA59CD37": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SingletonFunction5c1898e096fb4e3e95d5f6c67f3ce41aHandlerADF3E6EA",
+      "Arn"
+     ]
+    },
+    "Principal": {
+     "Fn::GetAtt": [
+      "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitForRoleC6F268FE",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitForRoleC6F268FE": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "states.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "Policies": [
+     {
+      "PolicyName": "InlineInvokeFunctions",
+      "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+        {
+         "Action": "lambda:InvokeFunction",
+         "Effect": "Allow",
+         "Resource": [
+          {
+           "Fn::GetAtt": [
+            "SingletonFunction76b3e830a873425f8453eddd85c86925Handler81461ECE",
+            "Arn"
+           ]
+          },
+          {
+           "Fn::GetAtt": [
+            "SingletonFunction5c1898e096fb4e3e95d5f6c67f3ce41aHandlerADF3E6EA",
+            "Arn"
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitFor095DF02B": {
+   "Type": "AWS::StepFunctions::StateMachine",
+   "Properties": {
+    "DefinitionString": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"StartAt\":\"framework-isComplete-task\",\"States\":{\"framework-isComplete-task\":{\"End\":true,\"Retry\":[{\"ErrorEquals\":[\"States.ALL\"],\"IntervalSeconds\":5,\"MaxAttempts\":6,\"BackoffRate\":1}],\"Catch\":[{\"ErrorEquals\":[\"States.ALL\"],\"Next\":\"framework-onTimeout-task\"}],\"Type\":\"Task\",\"Resource\":\"",
+       {
+        "Fn::GetAtt": [
+         "SingletonFunction76b3e830a873425f8453eddd85c86925Handler81461ECE",
+         "Arn"
+        ]
+       },
+       "\"},\"framework-onTimeout-task\":{\"End\":true,\"Type\":\"Task\",\"Resource\":\"",
+       {
+        "Fn::GetAtt": [
+         "SingletonFunction5c1898e096fb4e3e95d5f6c67f3ce41aHandlerADF3E6EA",
+         "Arn"
+        ]
+       },
+       "\"}}}"
+      ]
+     ]
+    },
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitForRoleC6F268FE",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "AwsApiCallSQSgetQueueAttributesdb2b0e3a2ae192ca2628c69910a84745WaitForRoleC6F268FE"
+   ]
   }
  },
  "Mappings": {
