@@ -9,7 +9,7 @@ const stack = new Stack(app, "TestStack");
 
 // Create a simple target state machine that just succeeds
 const targetStateMachine = new sfn.StateMachine(stack, "TargetStateMachine", {
-  definition: new sfn.Succeed(stack, "Success"),
+  definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Succeed(stack, "Success")),
 });
 
 // Create source queue

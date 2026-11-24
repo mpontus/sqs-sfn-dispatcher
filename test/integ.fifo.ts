@@ -9,7 +9,7 @@ const stack = new Stack(app, "TestStack");
 
 // Create a target state machine that always fails
 const targetStateMachine = new sfn.StateMachine(stack, "TargetStateMachine", {
-  definition: new sfn.Fail(stack, "Fail"),
+  definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Fail(stack, "Fail")),
 });
 
 // Create source FIFO queue

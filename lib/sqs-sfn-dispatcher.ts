@@ -8,7 +8,7 @@ import { Stack, Duration } from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { SingletonStateMachine } from "./singleton-state-machine";
 
-interface SqsStepFunctionDispatcherProps {
+export interface SqsStepFunctionDispatcherProps {
   source: sqs.IQueue;
   target: sfn.IStateMachine;
   batchSize?: number;
@@ -133,7 +133,7 @@ export class SqsStepFunctionDispatcher extends Construct {
       {
         lambdaPurpose: "DispatcherTriggerFunction",
         uuid: "8675309a-1234-5678-9abc-def0123456789",
-        runtime: lambda.Runtime.NODEJS_18_X,
+        runtime: lambda.Runtime.NODEJS_22_X,
         handler: "index.handler",
         code: lambda.Code.fromInline(`
         const { SFNClient, StartExecutionCommand } = require('@aws-sdk/client-sfn');

@@ -20,14 +20,41 @@ The solution uses a singleton Lambda function that retrieves messages from the q
 ## Usage
 
 ```typescript
-import { SqsStepFunctionsDispatcher } from "sqs-sfn-dispatcher";
+import { SqsStepFunctionDispatcher } from "sqs-sfn-dispatcher";
 
 // Create a dispatcher that connects your SQS queue to your Step Function
-const dispatcher = new SqsStepFunctionsDispatcher(this, "MyDispatcher", {
+const dispatcher = new SqsStepFunctionDispatcher(this, "MyDispatcher", {
   source: myQueue,
   target: myStateMachine,
 });
 ```
+
+### CDK compatibility
+
+The construct supports `aws-cdk-lib` versions `^2.190.0` and `constructs`
+versions `^10.0.0`. Both are peer dependencies, so your application supplies
+the versions it uses. The package does not require an exact CDK release.
+
+Development and the example app use CDK `2.278.0`. CI builds and tests the
+construct against both CDK `2.190.0` and `2.278.0`.
+
+The dispatcher Lambda uses the Node.js 22 runtime. Its batching, FIFO ordering,
+and message deletion behavior are unchanged.
+
+### Development
+
+Use Node.js 22 or later and Yarn Classic:
+
+```sh
+yarn install --frozen-lockfile
+yarn build
+yarn test --runInBand
+```
+
+The example has its own dependencies and lockfile. Run
+`yarn install --frozen-lockfile` and `yarn build` from `example/` to check it.
+GitHub Actions runs the AWS integration tests with `yarn integ --force`, which
+deploys and exercises them even when their snapshots have not changed.
 
 ### Working with FIFO Queues
 

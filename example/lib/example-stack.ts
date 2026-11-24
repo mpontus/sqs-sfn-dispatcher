@@ -9,7 +9,7 @@ export class ExampleStack extends cdk.Stack {
     super(scope, id, props);
 
     const queue = new sqs.Queue(this, "Queue", {
-      visibilityTimeout: cdk.Duration.seconds(10),
+      visibilityTimeout: cdk.Duration.seconds(30),
       fifo: true,
     });
 

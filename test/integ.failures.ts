@@ -18,7 +18,7 @@ const checkEven = new sfn.Choice(stack, "CheckEven", {
   .otherwise(new sfn.Fail(stack, "Fail"));
 
 const targetStateMachine = new sfn.StateMachine(stack, "TargetStateMachine", {
-  definition: checkEven,
+  definitionBody: sfn.DefinitionBody.fromChainable(checkEven),
 });
 
 // Create source queue
